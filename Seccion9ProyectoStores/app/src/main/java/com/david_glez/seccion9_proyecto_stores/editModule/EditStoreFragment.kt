@@ -26,9 +26,9 @@ import org.jetbrains.anko.uiThread
 class EditStoreFragment : Fragment() {
 
     private lateinit var mBinding: FragmentEditStoreBinding
+    private lateinit var mStoreEntity: StoreEntity
     private var mActivity: MainActivity? = null
     private var mIsEditMode: Boolean = false
-    private var mStoreEntity: StoreEntity? = null
 
     // MVVM
     private lateinit var mEditStoreViewModel: EditStoreViewModel
@@ -67,6 +67,29 @@ class EditStoreFragment : Fragment() {
             }
 
             setupActionBar()
+        }
+
+        mEditStoreViewModel.getResult().observe(viewLifecycleOwner){ result ->
+            hideKeyBoard()
+
+            when(result){
+                is Long -> {
+                    mStoreEntity.id = result
+
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
+
+                    Toast.makeText(context, R.string.edit_store_message_save_success,
+                        Toast.LENGTH_SHORT).show()
+                    mActivity?.onBackPressed()
+                }
+                is StoreEntity -> {
+                    mEditStoreViewModel.setStoreSelected(mStoreEntity)
+
+                    Snackbar.make(mBinding.root,
+                        getString(R.string.edit_store_message_update_success),
+                        Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -121,35 +144,17 @@ class EditStoreFragment : Fragment() {
                 true
             }
             R.id.action_save -> {
-                if (mStoreEntity != null && validateFields(mBinding.tilPhotoUrl, mBinding.tilPhone,
+                if (validateFields(mBinding.tilPhotoUrl, mBinding.tilPhone,
                     mBinding.tilName)){
-                    with(mStoreEntity!!){
+                    with(mStoreEntity){
                         name = mBinding.etName.text.toString().trim()
                         phone = mBinding.etPhone.text.toString().trim()
                         webSite = mBinding.etWebSite.text.toString().trim()
                         photoUrl = mBinding.etPhotoUrl.text.toString().trim()
                     }
 
-                    doAsync {
-                        if (mIsEditMode) StoreApplication.dataBase.storeDao().updateStore(mStoreEntity!!)
-                        else mStoreEntity!!.id = StoreApplication.dataBase.storeDao().addStore(mStoreEntity!!)
-
-                        uiThread {
-                            hideKeyBoard()
-                            if (mIsEditMode){
-                                // FIXME: aaaa me duele  
-                                //mActivity?.updateStore(mStoreEntity!!)
-                                Snackbar.make(mBinding.root,
-                                    getString(R.string.edit_store_message_update_success),
-                                    Snackbar.LENGTH_SHORT).show()
-                            } else {
-                                //mActivity?.addStore(mStoreEntity!!)
-                                Toast.makeText(context, R.string.edit_store_message_save_success,
-                                    Toast.LENGTH_SHORT).show()
-                                mActivity?.onBackPressed()
-                            }
-                        }
-                    }
+                    if (mIsEditMode) mEditStoreViewModel.updateStore(mStoreEntity)
+                    else mEditStoreViewModel.saveStore(mStoreEntity)
                 }
                 true
             }
@@ -207,8 +212,9 @@ class EditStoreFragment : Fragment() {
     override fun onDestroy() {
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         mActivity?.supportActionBar?.title = getString(R.string.app_name)
-        // FIXME: me duele ayuda
         mEditStoreViewModel.setShowFab(true)
+        mEditStoreViewModel.setResult(Any())
+
         setHasOptionsMenu(false)
         super.onDestroy()
     }
