@@ -21,10 +21,11 @@ class StoreAdapter(private var stores: MutableList<StoreEntity>, private var lis
 
         fun setListener(storeEntity: StoreEntity){
             with(mBinding.root){
-                setOnClickListener { listener.onClick(storeEntity.id) }
+                setOnClickListener { listener.onClick(storeEntity) }
                 setOnLongClickListener{
                     listener.onDeleteStore(storeEntity)
-                    true }
+                    true
+                }
             }
             mBinding.cbFavorite.setOnClickListener {
                 listener.onFavoriteStore(storeEntity)
@@ -59,9 +60,13 @@ class StoreAdapter(private var stores: MutableList<StoreEntity>, private var lis
     override fun getItemCount(): Int = stores.size
 
     fun add(storeEntity: StoreEntity) {
-        if (!stores.contains(storeEntity)){
-            stores.add(storeEntity)
-            notifyItemChanged(stores.size -1)
+        if (storeEntity.id != 0L){
+            if (!stores.contains(storeEntity)){
+                stores.add(storeEntity)
+                notifyItemChanged(stores.size -1)
+            } else {
+                update(storeEntity)
+            }
         }
     }
 
@@ -70,19 +75,11 @@ class StoreAdapter(private var stores: MutableList<StoreEntity>, private var lis
         notifyDataSetChanged()
     }
 
-    fun update(storeEntity: StoreEntity){
+    private fun update(storeEntity: StoreEntity){
         val index = stores.indexOf(storeEntity)
         if (index != -1){
             stores.set(index, storeEntity)
             notifyItemChanged(index)
-        }
-    }
-
-    fun delete(storeEntity: StoreEntity){
-        val index = stores.indexOf(storeEntity)
-        if (index != -1){
-            stores.removeAt(index)
-            notifyItemRemoved(index)
         }
     }
 }

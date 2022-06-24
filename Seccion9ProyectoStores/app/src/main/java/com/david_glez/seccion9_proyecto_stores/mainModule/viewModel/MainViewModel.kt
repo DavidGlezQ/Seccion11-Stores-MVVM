@@ -14,8 +14,10 @@ class MainViewModel: ViewModel() { // Aqui se alamcenan todas las tiendas de nue
     // esta clase se comunica con la vista y por getStores puede devolver el resultado
     /*tambien tiene acceso al modelo, en este caso el interactor (MainInteractor) ViewModel*/
     private var interactor: MainInteractor
+    private var storeList: MutableList<StoreEntity>
 
     init {
+        storeList = mutableListOf()
         interactor = MainInteractor()
     }
 
@@ -30,15 +32,31 @@ class MainViewModel: ViewModel() { // Aqui se alamcenan todas las tiendas de nue
     }
 
     private fun loadStores(){
-        // palabra reservada object para hacer la instancia de la interface
-        /*interactor.getStoresCallback(object: MainInteractor.StoresCallBack{
-            override fun getStoresCallBack(stores: MutableList<StoreEntity>) {
-                this@MainViewModel.stores.value = stores
-            }
-        })*/
         // llamada funcion de orden superior
         interactor.getStores {
             stores.value = it
+            storeList = it
+        }
+    }
+
+    fun deleteStore(storeEntity: StoreEntity){
+        interactor.deleteStore(storeEntity) {
+            val index = storeList.indexOf(storeEntity)
+            if (index != -1){
+                storeList.removeAt(index)
+                stores.value = storeList
+            }
+        }
+    }
+
+    fun updateStore(storeEntity: StoreEntity){
+        storeEntity.isFavorite = !storeEntity.isFavorite
+        interactor.updateStore(storeEntity) {
+            val index = storeList.indexOf(storeEntity)
+            if (index != -1){
+                storeList.set(index, storeEntity)
+                stores.value = storeList
+            }
         }
     }
 }
