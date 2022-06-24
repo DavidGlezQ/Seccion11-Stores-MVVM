@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         setupRecyclerView()
     }
 
+    // inicializar el viewModel y observar los cambios para la interface
     private fun setUpViewModel() {
         mMainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         mMainViewModel.getStores().observe(this) { stores->
