@@ -1,7 +1,7 @@
-package com.david_glez.seccion9_proyecto_stores.Daos
+package com.david_glez.seccion9_proyecto_stores.common.database
 
 import androidx.room.*
-import com.david_glez.seccion9_proyecto_stores.Entities.StoreEntity
+import com.david_glez.seccion9_proyecto_stores.common.entities.StoreEntity
 
 @Dao
 interface StoreDao {

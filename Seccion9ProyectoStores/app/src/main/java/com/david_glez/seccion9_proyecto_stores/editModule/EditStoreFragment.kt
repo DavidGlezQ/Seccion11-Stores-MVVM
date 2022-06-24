@@ -1,19 +1,17 @@
-package com.david_glez.seccion9_proyecto_stores.Fragments
+package com.david_glez.seccion9_proyecto_stores.editModule
 
 import android.content.Context
-import android.inputmethodservice.InputMethodService
 import android.os.Bundle
 import android.text.Editable
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.david_glez.seccion9_proyecto_stores.Entities.StoreEntity
-import com.david_glez.seccion9_proyecto_stores.MainActivity
+import com.david_glez.seccion9_proyecto_stores.common.entities.StoreEntity
+import com.david_glez.seccion9_proyecto_stores.mainModule.MainActivity
 import com.david_glez.seccion9_proyecto_stores.R
 import com.david_glez.seccion9_proyecto_stores.StoreApplication
 import com.david_glez.seccion9_proyecto_stores.databinding.FragmentEditStoreBinding

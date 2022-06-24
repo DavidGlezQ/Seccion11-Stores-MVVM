@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.david_glez.seccion9_proyecto_stores.Database.StoreDataBase
+import com.david_glez.seccion9_proyecto_stores.common.database.StoreDataBase
 
 class StoreApplication : Application() {
 

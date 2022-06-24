@@ -1,4 +1,4 @@
-package com.david_glez.seccion9_proyecto_stores
+package com.david_glez.seccion9_proyecto_stores.mainModule
 
 
 import android.content.Intent
@@ -6,18 +6,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.david_glez.seccion9_proyecto_stores.Adapters.StoreAdapter
-import com.david_glez.seccion9_proyecto_stores.Entities.StoreEntity
-import com.david_glez.seccion9_proyecto_stores.Fragments.EditStoreFragment
-import com.david_glez.seccion9_proyecto_stores.Interfaces.MainAux
-import com.david_glez.seccion9_proyecto_stores.Interfaces.OnClickListener
+import com.david_glez.seccion9_proyecto_stores.common.entities.StoreEntity
+import com.david_glez.seccion9_proyecto_stores.editModule.EditStoreFragment
+import com.david_glez.seccion9_proyecto_stores.common.utils.MainAux
+import com.david_glez.seccion9_proyecto_stores.R
+import com.david_glez.seccion9_proyecto_stores.StoreApplication
 import com.david_glez.seccion9_proyecto_stores.databinding.ActivityMainBinding
+import com.david_glez.seccion9_proyecto_stores.mainModule.adapters.OnClickListener
+import com.david_glez.seccion9_proyecto_stores.mainModule.adapters.StoreAdapter
+import com.david_glez.seccion9_proyecto_stores.mainModule.viewModel.MainViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
@@ -27,26 +28,25 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     private lateinit var mAdapter: StoreAdapter
     private lateinit var mGridLayout: GridLayoutManager
 
+    // MVVM
+    private lateinit var mMainViewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        /*mBinding.btnSave.setOnClickListener {
-            val store = StoreEntity(name = mBinding.etName.text.toString().trim()) // Argumentos nombrados
+        mBinding.fabAddStore.setOnClickListener { launchEditFragment() }
 
-            Thread{
-                StoreApplication.dataBase.storeDao().addStore(store)
-            }.start()
-
-            mAdapter.add(store)
-        }*/
-
-        mBinding.fabAddStore.setOnClickListener {
-            launchEditFragment()
-        }
-
+        setUpViewModel()
         setupRecyclerView()
+    }
+
+    private fun setUpViewModel() {
+        mMainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mMainViewModel.getStores().observe(this) { stores->
+            mAdapter.setStores(stores)
+        }
     }
 
     private fun launchEditFragment(args: Bundle? = null) {
@@ -61,13 +61,12 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         fragmentTransaction.commit()
 
         hideFab()
-        //mBinding.fabAddStore.hide()
     }
 
     private fun setupRecyclerView() {
         mAdapter = StoreAdapter(mutableListOf(), this)
         mGridLayout = GridLayoutManager(this, resources.getInteger(R.integer.main_columns))
-        getStores()
+
 
         mBinding.recyclerView.apply {
             setHasFixedSize(true) // Optimizacion de recursos
@@ -76,14 +75,14 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         }
     }
 
-    private fun getStores(){ // Ejecutar de forma asincrona en un hilo secundario
+    /*private fun getStores(){ // Ejecutar de forma asincrona en un hilo secundario
         doAsync {
             val stores = StoreApplication.dataBase.storeDao().getAllStores()
             uiThread {
                 mAdapter.setStores(stores)
             }
         }
-    }
+    }*/
 
     /*
     * OnClickListener Interface

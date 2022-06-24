@@ -1,4 +1,4 @@
-package com.david_glez.seccion9_proyecto_stores.Adapters
+package com.david_glez.seccion9_proyecto_stores.mainModule.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.david_glez.seccion9_proyecto_stores.Entities.StoreEntity
-import com.david_glez.seccion9_proyecto_stores.Interfaces.OnClickListener
+import com.david_glez.seccion9_proyecto_stores.common.entities.StoreEntity
 import com.david_glez.seccion9_proyecto_stores.R
 import com.david_glez.seccion9_proyecto_stores.databinding.ItemStoreBinding
 
@@ -66,8 +65,8 @@ class StoreAdapter(private var stores: MutableList<StoreEntity>, private var lis
         }
     }
 
-    fun setStores(stores: MutableList<StoreEntity>){
-        this.stores = stores
+    fun setStores(stores: List<StoreEntity>){
+        this.stores = stores as MutableList<StoreEntity>
         notifyDataSetChanged()
     }
 

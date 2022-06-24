@@ -1,4 +1,4 @@
-package com.david_glez.seccion9_proyecto_stores.Entities
+package com.david_glez.seccion9_proyecto_stores.common.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
